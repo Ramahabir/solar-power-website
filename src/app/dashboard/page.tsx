@@ -1,5 +1,26 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart2, Users, DollarSign, TrendingUp, Sun, ThermometerSun, Thermometer } from "lucide-react"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const data = [
+  { name: "Mon", value: 240 },
+  { name: "Tue", value: 139 },
+  { name: "Wed", value: 980 },
+  { name: "Thu", value: 390 },
+  { name: "Fri", value: 380 },
+  { name: "Sat", value: 430 },
+  { name: "Sun", value: 310 },
+];
 
 const stats = [
   {
@@ -16,6 +37,12 @@ const stats = [
   },
   {
     title: "Module temperature",
+    value: "25 °C",
+    description: "+19% increase",
+    icon: Thermometer,
+  },
+    {
+    title: "dummy",
     value: "25 °C",
     description: "+19% increase",
     icon: Thermometer,
@@ -59,8 +86,27 @@ export default function DashboardPage() {
           )
         })}
       </div>
-
-      {/* Add more dashboard content here */}
+      <div className="grid grid-cols-span-4 grid-rows-1 gap-4">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Energy Output</CardTitle>
+            <CardDescription>Last 7 Days</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" stroke="#4f46e5" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>      
     </div>
   )
 }
