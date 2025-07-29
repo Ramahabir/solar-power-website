@@ -1,41 +1,41 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart2, Users, DollarSign, TrendingUp } from "lucide-react"
+import { BarChart2, Users, DollarSign, TrendingUp, Sun, ThermometerSun, Thermometer } from "lucide-react"
 
 const stats = [
   {
-    title: "Total Revenue",
-    value: "$45,231.89",
+    title: "Irradiance",
+    value: "45 W/m²",
     description: "20.1% from last month",
-    icon: DollarSign,
+    icon: Sun,
   },
   {
-    title: "Active Users",
-    value: "2,350",
+    title: "Ambient Temperature",
+    value: "27 °C",
     description: "+180 new users",
-    icon: Users,
+    icon: ThermometerSun,
   },
   {
-    title: "Sales",
-    value: "12,234",
+    title: "Module temperature",
+    value: "25 °C",
     description: "+19% increase",
-    icon: TrendingUp,
-  },
-  {
-    title: "Active Projects",
-    value: "573",
-    description: "12 completed this month",
-    icon: BarChart2,
+    icon: Thermometer,
   },
 ]
 
 export default function DashboardPage() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome to your dashboard overview.
-        </p>
+      <div className="grid grid-cols-2 grid-rows-1 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome to your dashboard overview.
+          </p>
+        </div>
+          <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full w-fit text-sm font-medium">
+            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+            Live
+          </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
