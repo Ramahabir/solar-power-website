@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"args": [
+				"run",
+				"dev"
+			],
+			"problemMatcher": [],
+			"isBackground": true,
+			"label": "Next.js: Dev Server",
+			"type": "shell",
+			"command": "npm",
+			"group": "build"
+		}
+	]
+}
