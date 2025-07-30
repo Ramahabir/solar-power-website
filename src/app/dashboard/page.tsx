@@ -111,9 +111,9 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 grid-rows-1 gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Forecast Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome to your dashboard overview.
+            Displaying the latest weather forecasts.
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full w-fit text-sm font-medium ">
@@ -154,7 +154,7 @@ export default function DashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={predictionData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
+                  <XAxis dataKey="time" interval={0} tickFormatter={(value) => new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} />
                   <YAxis />
                   <Tooltip />
                   <Line type="monotone" dataKey="predicted_power" stroke="#4f46e5" strokeWidth={2}  name="Energy" />
