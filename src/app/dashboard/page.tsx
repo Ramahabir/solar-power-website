@@ -1,28 +1,10 @@
 "use client"
-
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart2, Users, DollarSign, TrendingUp, Sun, ThermometerSun, Thermometer } from "lucide-react"
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { Sun, ThermometerSun, Thermometer } from "lucide-react"
+import {  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,} from "recharts";
 
-const data = [
-  { name: "Mon", value: 240 },
-  { name: "Tue", value: 139 },
-  { name: "Wed", value: 980 },
-  { name: "Thu", value: 390 },
-  { name: "Fri", value: 380 },
-  { name: "Sat", value: 430 },
-  { name: "Sun", value: 310 },
-];
-
-const stats = [
+const status = [
   {
     title: "Irradiance",
     value: "45 W/m²",
@@ -50,6 +32,18 @@ const stats = [
 ]
 
 export default function DashboardPage() {
+  const [predictionData, setPredictionData] = useState([]);
+  const [stats, setStats] = useState([]);
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/predict")
+      .then(res => res.json())
+      .then(json => {
+        setPredictionData(json.data)
+      })
+      .catch((err) => {
+        console.error("Failed to fetch prediction data", err)
+      })
+  }, [])
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 grid-rows-1 gap-4">
@@ -59,27 +53,27 @@ export default function DashboardPage() {
             Welcome to your dashboard overview.
           </p>
         </div>
-          <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full w-fit text-sm font-medium">
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-            Live
-          </div>
+        <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full w-fit text-sm font-medium ">
+          <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+          Live
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon
+        {status.map((status) => {
+          const Icon = status.icon
           return (
-            <Card key={stat.title}>
+            <Card key={status.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  {stat.title}
+                  {status.title}
                 </CardTitle>
                 <Icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-2xl font-bold">{status.value}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stat.description}
+                  {status.description}
                 </p>
               </CardContent>
             </Card>
@@ -89,18 +83,19 @@ export default function DashboardPage() {
       <div className="grid grid-cols-span-4 grid-rows-1 gap-4">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Energy Output</CardTitle>
-            <CardDescription>Last 7 Days</CardDescription>
+            <CardTitle className="text-lg font-semibold">Energy Prediction</CardTitle>
+            <CardDescription>24 Hours</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
+                <LineChart data={predictionData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="time" />
                   <YAxis />
                   <Tooltip />
-                  <Line type="monotone" dataKey="value" stroke="#4f46e5" strokeWidth={2} />
+                  <Line type="monotone" dataKey="predicted_power" stroke="#4f46e5" strokeWidth={2}  name="Energy" />
+                  <Legend verticalAlign="bottom" height={36}/>
                 </LineChart>
               </ResponsiveContainer>
             </div>
