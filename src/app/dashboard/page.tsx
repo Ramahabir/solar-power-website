@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react";
-import { Sun, ThermometerSun, Thermometer } from "lucide-react";
+import { Sun, ThermometerSun, Thermometer, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,} from "recharts";
 
@@ -39,30 +39,55 @@ export default function DashboardPage() {
 
         const latest = json.data[json.data.length - 1]; // use last item as latest
         setTotalPower(json.total_energy)
+
+        const maxIrradiance = json.data.reduce(
+          (max: Prediction, row: Prediction) =>
+            row.irradiance > max.irradiance ? row : max,
+          json.data[0]
+        );
+
+        const maxAmbient = json.data.reduce(
+          (max: Prediction, row: Prediction) =>
+            row.ambient_temperature > max.ambient_temperature ? row : max,
+          json.data[0]
+        );
+
+        const maxModule = json.data.reduce(
+          (max: Prediction, row: Prediction) =>
+            row.module_temperature > max.module_temperature ? row : max,
+          json.data[0]
+        );
+
+        const maxPower = json.data.reduce(
+          (max: Prediction, row: Prediction) =>
+            row.predicted_power > max.predicted_power ? row : max,
+          json.data[0]
+        );
+
         setStats([
           {
             title: "Irradiance",
-            value: `${latest.irradiance} W/m²`,
-            description: "Latest irradiance",
+            value: `${maxIrradiance.irradiance} W/m²`,
+            description: "Highest irradiance",
             icon: Sun,
           },
           {
             title: "Ambient Temperature",
-            value: `${latest.ambient_temperature} °C`,
-            description: "Latest ambient temp",
+            value: `${maxAmbient.ambient_temperature} °C`,
+            description: "Highest ambient temperature",
             icon: ThermometerSun,
           },
           {
             title: "Module Temperature",
-            value: `${latest.module_temperature} °C`,
-            description: "Latest module temp",
+            value: `${maxModule.module_temperature} °C`,
+            description: "Highest module temperature",
             icon: Thermometer,
           },
           {
-            title: "Total Predicted Power in 24 hours",
+            title: "Predicted Power",
             value: `${json.total_energy} W`,
-            description: "Latest prediction",
-            icon: Thermometer,
+            description: "Total Predicted Power in 24 hours",
+            icon: Zap,
           },
         ]);
         setLoading(false);
