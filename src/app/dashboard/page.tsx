@@ -24,6 +24,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<Stat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [totalPower, setTotalPower] = useState(0)
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/predict")
@@ -37,7 +38,7 @@ export default function DashboardPage() {
         setPredictionData(json.data);
 
         const latest = json.data[json.data.length - 1]; // use last item as latest
-
+        setTotalPower(json.total_energy)
         setStats([
           {
             title: "Irradiance",
@@ -58,8 +59,8 @@ export default function DashboardPage() {
             icon: Thermometer,
           },
           {
-            title: "Predicted Power",
-            value: `${latest.predicted_power} W`,
+            title: "Total Predicted Power in 24 hours",
+            value: `${json.total_energy} W`,
             description: "Latest prediction",
             icon: Thermometer,
           },
@@ -140,5 +141,6 @@ export default function DashboardPage() {
         </Card>
       </div>      
     </div>
+    
   )
 }
