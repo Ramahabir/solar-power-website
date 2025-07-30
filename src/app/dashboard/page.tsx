@@ -1,49 +1,86 @@
 "use client"
 import { useEffect, useState } from "react";
+import { Sun, ThermometerSun, Thermometer } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sun, ThermometerSun, Thermometer } from "lucide-react"
 import {  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,} from "recharts";
 
-const status = [
-  {
-    title: "Irradiance",
-    value: "45 W/m²",
-    description: "20.1% from last month",
-    icon: Sun,
-  },
-  {
-    title: "Ambient Temperature",
-    value: "27 °C",
-    description: "+180 new users",
-    icon: ThermometerSun,
-  },
-  {
-    title: "Module temperature",
-    value: "25 °C",
-    description: "+19% increase",
-    icon: Thermometer,
-  },
-    {
-    title: "dummy",
-    value: "25 °C",
-    description: "+19% increase",
-    icon: Thermometer,
-  },
-]
+interface Prediction {
+  time: string;
+  irradiance: number;
+  ambient_temperature: number;
+  module_temperature: number;
+  predicted_power: number;
+}
+
+interface Stat {
+  title: string;
+  value: string;
+  description: string;
+  icon: React.ElementType;
+}
 
 export default function DashboardPage() {
-  const [predictionData, setPredictionData] = useState([]);
-  const [stats, setStats] = useState([]);
+  const [predictionData, setPredictionData] = useState<Prediction[]>([]);
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/predict")
       .then(res => res.json())
       .then(json => {
-        setPredictionData(json.data)
+        if (!json.data || json.data.length === 0) {
+          setError("No prediction data available.");
+          setLoading(false);
+          return;
+        }
+        setPredictionData(json.data);
+
+        const latest = json.data[json.data.length - 1]; // use last item as latest
+
+        setStats([
+          {
+            title: "Irradiance",
+            value: `${latest.irradiance} W/m²`,
+            description: "Latest irradiance",
+            icon: Sun,
+          },
+          {
+            title: "Ambient Temperature",
+            value: `${latest.ambient_temperature} °C`,
+            description: "Latest ambient temp",
+            icon: ThermometerSun,
+          },
+          {
+            title: "Module Temperature",
+            value: `${latest.module_temperature} °C`,
+            description: "Latest module temp",
+            icon: Thermometer,
+          },
+          {
+            title: "Predicted Power",
+            value: `${latest.predicted_power} W`,
+            description: "Latest prediction",
+            icon: Thermometer,
+          },
+        ]);
+        setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to fetch prediction data", err)
-      })
+        setError("Failed to fetch prediction data");
+        setLoading(false);
+        console.error("Failed to fetch prediction data", err);
+      });
   }, [])
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 grid-rows-1 gap-4">
@@ -60,20 +97,20 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {status.map((status) => {
-          const Icon = status.icon
+        {stats.map((stat) => {
+          const Icon = stat.icon
           return (
-            <Card key={status.title}>
+            <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  {status.title}
+                  {stat.title}
                 </CardTitle>
                 <Icon className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{status.value}</div>
+                <div className="text-2xl font-bold">{stat.value}</div>
                 <p className="text-xs text-muted-foreground">
-                  {status.description}
+                  {stat.description}
                 </p>
               </CardContent>
             </Card>
