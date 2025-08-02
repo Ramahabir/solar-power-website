@@ -12,27 +12,9 @@ export function MainNav({
     >
       <Link
         href="/"
-        className="text-sm font-medium transition-colors hover:text-primary"
+        className="text-sm font-medium transition-colors hover:text-primary ml-4"
       >
-        Overview
-      </Link>
-      <Link
-        href="/analytics"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Analytics
-      </Link>
-      <Link
-        href="/customers"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Customers
-      </Link>
-      <Link
-        href="/settings"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Settings
+        AISensera
       </Link>
     </nav>
   )
