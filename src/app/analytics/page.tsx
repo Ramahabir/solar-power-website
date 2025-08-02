@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Sun, Thermometer, Zap } from "lucide-react";
+import { ChatDialog } from "@/components/chat/chat-dialog";
 
 // Mock data generator for solar analytics
 const generateMockData = (hours: number = 24) => {
@@ -80,7 +81,7 @@ const generateDailyData = (days: number = 7) => {
 };
 
 export default function AnalyticsPage() {
-  const [timeRange, setTimeRange] = useState<"24h" | "7d" | "30d">("24h");
+  const [timeRange, setTimeRange] = useState<"24h" | "7d">("24h");
   const [realTimeData, setRealTimeData] = useState(generateMockData(24));
   const [dailyData, setDailyData] = useState(generateDailyData(7));
 
@@ -104,9 +105,6 @@ export default function AnalyticsPage() {
       case "7d":
         setDailyData(generateDailyData(7));
         break;
-      case "30d":
-        setDailyData(generateDailyData(30));
-        break;
     }
   }, [timeRange]);
 
@@ -120,14 +118,14 @@ export default function AnalyticsPage() {
         <CalendarDays className="h-4 w-4" />
         <span className="text-sm font-medium">Time Range:</span>
         <div className="flex space-x-1">
-          {(["24h", "7d", "30d"] as const).map((range) => (
+          {(["24h", "7d"] as const).map((range) => (
             <Button
               key={range}
               variant={timeRange === range ? "default" : "outline"}
               size="sm"
               onClick={() => setTimeRange(range)}
             >
-              {range === "24h" ? "24 Hours" : range === "7d" ? "7 Days" : "30 Days"}
+              {range === "24h" ? "24 Hours" : "7 Days"}
             </Button>
           ))}
         </div>
@@ -207,7 +205,7 @@ export default function AnalyticsPage() {
             <CardDescription>
               {timeRange === "24h" 
                 ? "Real-time solar irradiance levels over 24 hours"
-                : `Average daily irradiance over ${timeRange === "7d" ? "7 days" : "30 days"}`
+                : "Average daily irradiance over 7 days"
               }
             </CardDescription>
           </CardHeader>
@@ -243,7 +241,7 @@ export default function AnalyticsPage() {
             <CardDescription>
               {timeRange === "24h"
                 ? "Module and ambient temperature comparison"
-                : `Temperature trends over ${timeRange === "7d" ? "7 days" : "30 days"}`
+                : "Temperature trends over 7 days"
               }
             </CardDescription>
           </CardHeader>
@@ -292,7 +290,7 @@ export default function AnalyticsPage() {
           <CardHeader>
             <CardTitle>Energy Production Overview</CardTitle>
             <CardDescription>
-              Daily energy generation over {timeRange === "7d" ? "7 days" : "30 days"}
+              Daily energy generation over 7 days
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -342,6 +340,9 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
       )}
+      
+      <ChatDialog />
     </div>
+
   );
 }
