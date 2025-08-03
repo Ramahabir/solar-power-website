@@ -84,12 +84,55 @@ export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<"24h" | "7d">("24h");
   const [realTimeData, setRealTimeData] = useState(generateMockData(24));
   const [dailyData, setDailyData] = useState(generateDailyData(7));
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data from API
+  const fetchApiData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch("http://127.0.0.1:8000/predict");
+      const data = await response.json();
+      
+      if (!data.data || data.data.length === 0) {
+        setError("No prediction data available.");
+        return;
+      }
+
+      // Transform API data to match our chart format
+      const transformedData = data.data.map((item: any) => ({
+        time: new Date(item.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date(item.time).getTime(),
+        irradiance: item.irradiance,
+        moduleTemperature: item.module_temperature,
+        ambientTemperature: item.ambient_temperature,
+        powerOutput: item.predicted_power,
+      }));
+
+      setRealTimeData(transformedData);
+    } catch (err) {
+      setError("Failed to fetch prediction data");
+      console.error("Failed to fetch prediction data", err);
+      // Fallback to mock data if API fails
+      setRealTimeData(generateMockData(24));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    if (timeRange === "24h") {
+      fetchApiData();
+    }
+  }, []);
 
   // Simulate real-time updates
   useEffect(() => {
     const interval = setInterval(() => {
       if (timeRange === "24h") {
-        setRealTimeData(generateMockData(24));
+        fetchApiData();
       }
     }, 30000); // Update every 30 seconds
 
@@ -100,7 +143,7 @@ export default function AnalyticsPage() {
   useEffect(() => {
     switch (timeRange) {
       case "24h":
-        setRealTimeData(generateMockData(24));
+        fetchApiData();
         break;
       case "7d":
         setDailyData(generateDailyData(7));
@@ -113,22 +156,47 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Time Range Selector */}
-      <div className="flex items-center space-x-2">
-        <CalendarDays className="h-4 w-4" />
-        <span className="text-sm font-medium">Time Range:</span>
-        <div className="flex space-x-1">
-          {(["24h", "7d"] as const).map((range) => (
-            <Button
-              key={range}
-              variant={timeRange === range ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTimeRange(range)}
-            >
-              {range === "24h" ? "24 Hours" : "7 Days"}
-            </Button>
-          ))}
+      {/* Loading State */}
+      {loading && timeRange === "24h" && (
+        <div className="flex items-center justify-center p-4">
+          <div className="text-sm text-muted-foreground">Loading prediction data...</div>
         </div>
+      )}
+
+      {/* Error State */}
+      {error && timeRange === "24h" && (
+        <div className="flex items-center justify-center p-4">
+          <div className="text-sm text-red-500">Error: {error}</div>
+        </div>
+      )}
+
+      {/* Time Range Selector */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <CalendarDays className="h-4 w-4" />
+          <span className="text-sm font-medium">Time Range:</span>
+          <div className="flex space-x-1">
+            {(["24h", "7d"] as const).map((range) => (
+              <Button
+                key={range}
+                variant={timeRange === range ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTimeRange(range)}
+                disabled={loading && range === "24h"}
+              >
+                {range === "24h" ? "24 Hours" : "7 Days"}
+              </Button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Data Source Indicator */}
+        {timeRange === "24h" && (
+          <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full text-xs font-medium bg-green-100">
+            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+            {error ? "Mock Data" : "Live API Data"}
+          </div>
+        )}
       </div>
 
       {/* Current Metrics Cards */}

@@ -65,29 +65,34 @@ export default function DashboardPage() {
           json.data[0]
         );
 
+        const avgIrradiance = json.data.reduce((sum: number, row: Prediction) => sum + row.irradiance, 0) / json.data.length;
+        const avgAmbientTemp = json.data.reduce((sum: number, row: Prediction) => sum + row.ambient_temperature, 0) / json.data.length;
+        const avgModuleTemp = json.data.reduce((sum: number, row: Prediction) => sum + row.module_temperature, 0) / json.data.length;
+        const totalPredictedEnergy = json.data.reduce((sum: number, row: Prediction) => sum + row.predicted_power, 0);
+
         setStats([
           {
-            title: "Irradiance",
-            value: `${maxIrradiance.irradiance} W/m²`,
-            description: "Highest irradiance",
+            title: "Peak Solar Irradiance",
+            value: `${maxIrradiance.irradiance.toFixed(1)} W/m²`,
+            description: `Avg: ${avgIrradiance.toFixed(1)} W/m² • Optimal conditions detected`,
             icon: Sun,
           },
           {
-            title: "Ambient Temperature",
-            value: `${maxAmbient.ambient_temperature} °C`,
-            description: "Highest ambient temperature",
+            title: "Environmental Temperature",
+            value: `${maxAmbient.ambient_temperature.toFixed(1)}°C`,
+            description: `Avg: ${avgAmbientTemp.toFixed(1)}°C • Weather impact analysis`,
             icon: ThermometerSun,
           },
           {
-            title: "Module Temperature",
-            value: `${maxModule.module_temperature} °C`,
-            description: "Highest module temperature",
+            title: "Panel Operating Temperature", 
+            value: `${maxModule.module_temperature.toFixed(1)}°C`,
+            description: `Avg: ${avgModuleTemp.toFixed(1)}°C • Efficiency monitoring`,
             icon: Thermometer,
           },
           {
-            title: "Predicted Power",
-            value: `${json.total_energy} W`,
-            description: "Total Predicted Power in 24 hours",
+            title: "Total Energy Forecast",
+            value: `${(json.total_energy / 1000).toFixed(2)} kWh`,
+            description: `${(totalPredictedEnergy / 1000).toFixed(1)} kWh accumulated • 24h projection`,
             icon: Zap,
           },
         ]);
@@ -110,33 +115,39 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 grid-rows-1 gap-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Forecast Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Solar Energy Dashboard</h1>
           <p className="text-muted-foreground">
-            Displaying the latest weather forecasts.
+            Real-time analytics and 24-hour energy predictions for optimal performance monitoring.
           </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full w-fit text-sm font-medium ">
+        <div className="flex items-center gap-2 px-3 py-1 text-green-800 rounded-full w-fit text-sm font-medium bg-green-50">
           <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
           Live
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
+        {stats.map((stat, index) => {
           const Icon = stat.icon
+          const iconColors = [
+            "text-yellow-500", // Sun - yellow
+            "text-blue-500",   // ThermometerSun - blue  
+            "text-red-500",    // Thermometer - red
+            "text-green-500"   // Zap - green
+          ];
           return (
-            <Card key={stat.title}>
+            <Card key={stat.title} className="hover:shadow-md transition-shadow duration-200">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-sm font-medium text-gray-700">
                   {stat.title}
                 </CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
+                <Icon className={`h-5 w-5 ${iconColors[index]}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   {stat.description}
                 </p>
               </CardContent>
@@ -147,8 +158,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-span-4 grid-rows-1 gap-4">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Energy Prediction</CardTitle>
-            <CardDescription>24 Hours</CardDescription>
+            <CardTitle className="text-lg font-semibold">Power Generation Analytics</CardTitle>
+            <CardDescription>24-hour energy output predictions with performance insights</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-64">
