@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Sun, Thermometer, Zap, TrendingUp, TrendingDown, Activity } from "lucide-react";
-import { ChatDialog } from "@/components/chat/chat-dialog";
 
 // Mock data generator for solar analytics
 const generateMockData = (hours: number = 24) => {
@@ -732,8 +731,6 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
       )}
-      
-      {/* <ChatDialog /> */}
     </div>
 
   );

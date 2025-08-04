@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Sun, ThermometerSun, Thermometer, Zap, AlertTriangle, Cloud, Droplets, Leaf, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,} from "recharts";
-import { ChatDialog } from "@/components/chat/chat-dialog";
 
 // Variable
 interface Prediction {
@@ -356,7 +355,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>      
-      {/* <ChatDialog /> */}
     </div>
   )
 }
