@@ -733,7 +733,7 @@ export default function AnalyticsPage() {
         </Card>
       )}
       
-      <ChatDialog />
+      {/* <ChatDialog /> */}
     </div>
 
   );

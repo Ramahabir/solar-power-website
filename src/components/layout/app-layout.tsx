@@ -21,7 +21,7 @@ const sidebarNavItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Analytics",
+    title: "Insights",
     href: "/analytics",
     icon: BarChart2,
   },
