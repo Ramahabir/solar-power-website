@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { LayoutDashboard, BarChart2, Settings, Menu } from "lucide-react"
+import { LayoutDashboard, BarChart2, Settings, Menu, MessageCircle } from "lucide-react"
 import { MainNav } from "@/components/layout/main-nav"
 import { SidebarNav } from "@/components/layout/sidebar-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -24,6 +24,11 @@ const sidebarNavItems = [
     title: "Insights",
     href: "/analytics",
     icon: BarChart2,
+  },
+  {
+    title: "Chatbot",
+    href: "/chatbot",
+    icon: MessageCircle,
   },
   {
     title: "Settings",
