@@ -5,6 +5,20 @@ import { Send, MessageCircle, Bot, User, Loader2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import ReactMarkdown from 'react-markdown';
+
+export function Timestamp({ date }: { date: Date }) {
+  const [time, setTime] = useState('');
+
+  useEffect(() => {
+    setTime(date.toLocaleTimeString());
+  }, [date]);
+
+  return (
+    <p className="text-xs text-muted-foreground mt-1 px-1">{time}</p>
+  );
+}
+
 
 interface Message {
   id: string;
@@ -136,11 +150,15 @@ export default function ChatbotPage() {
                         ? 'bg-blue-500 text-white rounded-br-sm'
                         : 'bg-gray-100 text-gray-900 rounded-bl-sm'
                     }`}>
-                      <p className="text-sm leading-relaxed">{message.content}</p>
+                      {message.role === 'user' ? (
+                        <p className="prose prose-sm max-w-none text-sm leading-relaxed">{message.content}</p>
+                      ) : (
+                        <div className="prose prose-sm max-w-none text-sm leading-relaxed prose-headings:text-gray-900 prose-p:text-gray-900 prose-strong:text-gray-900 prose-code:text-gray-900 prose-pre:bg-gray-200 prose-pre:text-gray-900">
+                          <ReactMarkdown>{message.content}</ReactMarkdown>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 px-1">
-                      {message.timestamp.toLocaleTimeString()}
-                    </p>
+                    <Timestamp date={message.timestamp} />
                   </div>
                 </div>
               ))}

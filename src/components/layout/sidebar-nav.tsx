@@ -28,7 +28,7 @@ export function SidebarNav({
     <div className={cn("flex flex-col", className)}>
       {/* Toggle button at the top of sidebar */}
       {showToggleButton && onToggleCollapse && (
-        <div className={cn("mb-4", collapsed ? "flex justify-center" : "flex justify-end")}>
+        <div className={cn("mb-4", collapsed ? "justify-center w-10 h-10 p-0" : "justify-center w-10 h-10 p-0")}>
           <Button
             variant="ghost"
             size="icon"
@@ -37,9 +37,9 @@ export function SidebarNav({
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsed ? (
-              <PanelLeft className="h-4 w-4" />
+              <PanelLeft className="h-4 w-3" />
             ) : (
-              <PanelLeftClose className="h-4 w-4" />
+              <PanelLeftClose className="h-4 w-3" />
             )}
             <span className="sr-only">
               {collapsed ? "Expand sidebar" : "Collapse sidebar"}
