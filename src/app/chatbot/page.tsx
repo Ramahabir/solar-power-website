@@ -94,7 +94,7 @@ export default function ChatbotPage() {
         </div>
       </div>
 
-      <div className="h-[calc(100vh-300px)] min-h-[500px] flex flex-col">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col">
         <Card className="flex-1 flex flex-col">
           <CardHeader className="flex-shrink-0">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
@@ -106,7 +106,7 @@ export default function ChatbotPage() {
             </CardDescription>
           </CardHeader>
           
-          <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+          <CardContent className="flex-1 flex flex-col min-h-0 p-0 overflow-hidden">
             {/* Messages Container */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((message) => (
