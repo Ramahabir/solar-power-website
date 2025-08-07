@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ReactMarkdown from 'react-markdown';
 
-export function Timestamp({ date }: { date: Date }) {
+function Timestamp({ date }: { date: Date }) {
   const [time, setTime] = useState('');
 
   useEffect(() => {
