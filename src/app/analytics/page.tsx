@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("http://127.0.0.1:8000/predict");
+      const response = await fetch("https://mlearning-746989509626.asia-south1.run.app/predict");
       const data = await response.json();
       
       if (!data.data || data.data.length === 0) {
