@@ -47,7 +47,7 @@ export default function DashboardPage() {
   const [totalPower, setTotalPower] = useState(0)
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/predict")
+    fetch("https://mlearning-746989509626.asia-south1.run.app/predict")
       .then(res => res.json())
       .then(json => {
         if (!json.data || json.data.length === 0) {

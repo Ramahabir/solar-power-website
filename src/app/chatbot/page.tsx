@@ -217,7 +217,7 @@ export default function ChatbotPage() {
 // API call to chatbot endpoint
 async function callChatbotAPI(input: string): Promise<string> {
   try {
-    const response = await fetch('http://127.0.0.1:8000/chat', {
+    const response = await fetch('https://mlearning-746989509626.asia-south1.run.app/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
