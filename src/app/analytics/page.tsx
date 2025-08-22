@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("https://mlearning-746989509626.asia-south1.run.app/predict");
+      const response = await fetch("http://127.0.0.1:8000/predict");
       const data = await response.json();
       
       if (!data.data || data.data.length === 0) {
@@ -340,17 +340,14 @@ export default function AnalyticsPage() {
           <CalendarDays className="h-4 w-4" />
           <span className="text-sm font-medium">Time Range:</span>
           <div className="flex space-x-1">
-            {(["24h", "7d"] as const).map((range) => (
-              <Button
-                key={range}
-                variant={timeRange === range ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTimeRange(range)}
-                disabled={loading && range === "24h"}
-              >
-                {range === "24h" ? "24 Hours" : "7 Days"}
-              </Button>
-            ))}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setTimeRange("24h")}
+              disabled={loading}
+            >
+              24 Hours
+            </Button>
           </div>
         </div>
         
@@ -624,41 +621,6 @@ export default function AnalyticsPage() {
           </Card>
         )}
       </div>
-
-      {/* Real-time Power Output Chart - Full Width */}
-      {timeRange === "24h" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Real-time Power Output</CardTitle>
-            <CardDescription>
-              Current solar power generation throughout the day
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={realTimeData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="time"
-                  fontSize={12}
-                />
-                <YAxis fontSize={12} />
-                <Tooltip 
-                  labelFormatter={(label) => `Time: ${label}`}
-                  formatter={(value: number) => [`${value.toFixed(1)} kW`, "Power Output"]}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="powerOutput"
-                  stroke="#10b981" 
-                  fill="#34d399" 
-                  fillOpacity={0.3}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Additional Charts Row */}
       {timeRange !== "24h" && (
