@@ -1,36 +1,151 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Solar Panel Monitoring & Prediction
+This project integrates IoT devices, a backend with machine learning & chatbot, and a frontend dashboard to monitor, predict, and interact with solar panel performance in real time.
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📌 Overview
+The system collects real sensor data (power, temperature, humidity) via ESP32, sends it to a FastAPI backend where it is processed, stored, and used for energy prediction (with ML + Open-Meteo API). A Next.js frontend provides a live dashboard and a chatbot interface for user interaction. Click at the pillars description to go to the repositories 
 ```
+   [ESP32 + Sensors]  -->  [FastAPI Backend]  -->  [Database + ML + OpenMeteo API]
+         |                         |                      |
+   INA219 (power)                  |                      |
+   DHT22 (temperature)             |                      |
+                                   v                      v
+                          [Next.js Frontend]   <-->   [Chatbot (LangGraph)]
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```
+| Pillar    | Description | Key Features | Technologies |
+|-----------|-------------|--------------|--------------|
+| [**IoT (ESP32)**](https://github.com/Ramahabir/Solar-Panel) | Collects real-world solar panel data from sensors and sends it to the backend. | - Reads power (INA219)<br>- Reads temperature & humidity (DHT22)<br>- Packages data as JSON<br>- Sends via MQTT to backend | ESP32, INA219, DHT22, MQTT |
+| [**Backend (FastAPI)**](https://github.com/Ramahabir/MLearning) | Acts as the data hub: stores IoT data, generates predictions, and powers the chatbot. | - `GET /sensor` → receive sensor JSON<br>- `GET /predict` → forecast solar power (irradiance, ambient temp, module temp → predicted power)<br>- `POST /chat` → LangGraph chatbot powered by Gemini 2.5 Flash with solar panel RAG | FastAPI, PostgreSQL, Open-Meteo API, Scikit-learn, LangGraph, Gemini 2.5 Flash |
+| [**Frontend (Next.js)**](https://github.com/Ramahabir/solar-power-website)  | User interface for monitoring and interacting with the system. | - `/dashboard` → real-time charts with Recharts<br>- `/insight` → historical data + predictions<br>- `/setting` → configuration panel<br>- `/chatbot` → AI chatbot interface | Next.js, React, TailwindCSS, Recharts |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## 💻 Front End ( Next.js )
+The frontend is built with Next.js + React, styled with TailwindCSS, and uses Recharts for data visualization. It provides a modern and responsive interface where users can explore live sensor data, predictions, and interact with the chatbot.
 
-To learn more about Next.js, take a look at the following resources:
+### 🌐 Routes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. /dashboard
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    - Displays real-time sensor data (voltage, current, power, temperature).
 
-## Deploy on Vercel
+    - Interactive line & bar charts (Recharts) for:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+        - Power vs Time
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+        - Temperature vs Time
+
+        - Daily Energy Summary
+
+    - Auto-refreshes data via backend API.
+
+2. /insight
+
+    - Provides analytics & predictions from the backend.
+
+    - Shows historical trends (daily, weekly, monthly).
+
+    - Displays ML-powered future energy forecasts.
+
+    - Correlation graphs (e.g., temperature vs power efficiency).
+
+3. /setting
+
+    - User configuration panel.
+
+    - Options to adjust:
+
+        - IoT Integration
+        - Panel Specification
+4. /chatbot
+
+    - Interactive AI chatbot interface.
+
+    - Users can ask questions like:
+
+        - “What’s my total energy today?”
+
+        - “Show me yesterday’s performance.”
+
+        - “Predict my solar output for tomorrow.”
+
+    - Connected to LangGraph + FastAPI backend, fetching live data & predictions.
+
+## 🔧 Backend
+The backend acts as the data hub for the system, providing:
+
+ - Data ingestion from IoT devices (ESP32).
+
+ - Prediction service for solar panel performance.
+
+ - Chatbot service powered by LangGraph + Gemini 2.5 Flash with RAG.
+
+ - API endpoints consumed by the Next.js frontend.
+
+### 📡 Api Routes
+1. __POST /data__
+
+Receives JSON data from IoT devices (ESP32)
+
+**Payload Example**:
+
+    {
+    "timestamp": "2025-08-19T10:00:00Z",
+    "voltage": 12.5,
+    "current": 1.2,
+    "power": 15.0,
+    "ambient_temp": 32.4,
+    "module_temp": 35.1,
+    "irradiance": 820
+    }
+
+2. __GET /predict__
+
+Generates solar power output predictions based on irradiance, ambient temperature, and module temperature.
+
+Uses Open-Meteo API for weather forecast data.
+
+Applies ML model trained on historical sensor + weather data.
+
+**Response Example**:
+
+    {
+    "timestamp": "2025-08-20T10:00:00Z",
+    "irradiance": 810,
+    "ambient_temp": 30.2,
+    "module_temp": 33.5,
+    "predicted_power_output": 14.7
+    }
+
+3. __POST /chat__
+
+Backend route for LangGraph chatbot.
+
+- Powered by Gemini 2.5 Flash.
+
+- Uses RAG (Retrieval Augmented Generation) with solar panel condition data (from DB + predictions).
+
+- Allows natural language interaction with system insights.
+
+**Example Input**:
+
+    { "message": "What is my predicted power output tomorrow?" }
+
+
+**Example Output**:
+
+    {
+    "response": "Based on tomorrow’s forecast, your panels are expected to produce around 15.2W at peak hours, with higher efficiency in the morning due to lower module temperatures."
+    }
+
+⚙️ Key Components
+
+- FastAPI → lightweight backend framework.
+
+- Database → stores raw + processed sensor data.
+
+- Open-Meteo API → external weather forecasts.
+
+- Machine Learning → time-series prediction for power output.
+
+- LangGraph + Gemini 2.5 Flash → chatbot pipeline with RAG for solar panel data.
